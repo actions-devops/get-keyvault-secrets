@@ -8,11 +8,12 @@ import { AzureKeyVaultSecret } from "./KeyVaultHelper";
 export class KeyVaultClient extends ServiceClient {    
     private keyVaultUrl: string;
     private apiVersion: string = "7.0";
-    private tokenArgs: string[] = ["--resource", "https://vault.usgovcloudapi.net"];
+    private tokenArgs: string[] = ["--resource", "https://vault.azure.net"];
     
-    constructor(endpoint: IAuthorizationHandler, timeOut: number, keyVaultUrl: string) {
+    constructor(endpoint: IAuthorizationHandler, timeOut: number, keyVaultUrl: string, tokenArgs: string[]) {
         super(endpoint, timeOut);
         this.keyVaultUrl = keyVaultUrl;
+        this.tokenArgs = tokenArgs;
     }
 
     public async invokeRequest(request: WebRequest): Promise<WebResponse> {
