@@ -19,7 +19,7 @@ export class KeyVaultActionParameters {
             core.setFailed("Secret filter not provided.");
         }
 
-        var azureKeyVaultDnsSuffix = "vault.azure.net";
+        var azureKeyVaultDnsSuffix = "vault.usgovcloudapi.net";
         this.keyVaultUrl = util.format("https://%s.%s", this.keyVaultName, azureKeyVaultDnsSuffix);
         return this;
     }
