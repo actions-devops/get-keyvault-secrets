@@ -85,7 +85,7 @@ export class KeyVaultClient extends ServiceClient {
             core.debug("Callback Cannot Be Null");
             throw new Error("Callback Cannot Be Null");
         }
-
+        core.info(this.keyVaultUrl);
         // Create HTTP transport objects
         var httpRequest: WebRequest = {
             method: 'GET',
