@@ -8,7 +8,7 @@ import { AzureKeyVaultSecret } from "./KeyVaultHelper";
 export class KeyVaultClient extends ServiceClient {    
     private keyVaultUrl: string;
     private apiVersion: string = "7.0";
-    private tokenArgs: string[] = ["--resource", "https://vault.azure.net"];
+    private tokenArgs: string[] = ["--resource", "https://vault.usgovcloudapi.net"];
     
     constructor(endpoint: IAuthorizationHandler, timeOut: number, keyVaultUrl: string) {
         super(endpoint, timeOut);
