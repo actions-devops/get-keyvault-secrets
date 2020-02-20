@@ -15,19 +15,29 @@ async function run() {
         core.exportVariable('AZURE_HTTP_USER_AGENT', userAgentString);
 
         var actionParameters = new KeyVaultActionParameters().getKeyVaultActionParameters();
-        let handler: IAuthorizationHandler = null;
+        
+        if (actionParameters.apiVersion == "v2") {
+            var keyVaultHelper2 = new KeyVaultHelper2(actionParameters);            
+            keyVaultHelper2.downloadSecrets();
+        }else{
 
-        try {
-            handler = await getHandler();
-        }
-        catch (error) {
-            core.setFailed("Could not login to Azure.")
-        }
+            let handler: IAuthorizationHandler = null;
 
-        if (handler != null) {
-            var keyVaultHelper = new KeyVaultHelper(handler, 100, actionParameters);            
-            keyVaultHelper.downloadSecrets();
-        }        
+            try {
+                handler = await getHandler();
+            }
+            catch (error) {
+                core.setFailed("Could not login to Azure.")
+            }
+    
+            if (handler != null) {
+                var keyVaultHelper = new KeyVaultHelper(handler, 100, actionParameters);            
+                keyVaultHelper.downloadSecrets();
+            }    
+
+        }
+        
+    
     } catch (error) {
         core.debug("Get secret failed with error: " + error);
         core.setFailed(!!error.message ? error.message : "Error occurred in fetching the secrets.");

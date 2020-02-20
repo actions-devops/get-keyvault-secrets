@@ -3,7 +3,7 @@
 
 import { SecretClient } from "@azure/keyvault-secrets";
 import { DefaultAzureCredential } from "@azure/identity";
-//import * as core from '@actions/core'
+import * as core from '@actions/core'
 
 export class KeyVaultClient2 {    
        
@@ -12,8 +12,8 @@ export class KeyVaultClient2 {
         this.keyVaultUrl = keyVaultUrl;
     }
   
-    public getSecrets(nextLink: string) {
-    
+    public getSecrets(secretName: string) {
+      
     }
 
     public async getSecretValue(secretName: string) {

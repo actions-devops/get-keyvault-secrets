@@ -14,11 +14,11 @@ export class AzureKeyVaultSecret2 {
 export class KeyVaultHelper2 {
 
     private keyVaultActionParameters: KeyVaultActionParameters;
-    private keyVaultClient: KeyVaultClient2;
+    private keyVaultClient2: KeyVaultClient2;
 
-    constructor(handler: IAuthorizationHandler, timeOut: number, keyVaultActionParameters: KeyVaultActionParameters) {
+    constructor(keyVaultActionParameters: KeyVaultActionParameters) {
         this.keyVaultActionParameters = keyVaultActionParameters;
-        this.keyVaultClient = new KeyVaultClient2(handler, timeOut, keyVaultActionParameters.keyVaultUrl);
+        this.keyVaultClient2 = new KeyVaultClient2( keyVaultActionParameters.keyVaultUrl);
     }
 
     public downloadSecrets(): Promise<void> {
@@ -36,7 +36,7 @@ export class KeyVaultHelper2 {
 
     private downloadAllSecrets(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            this.keyVaultClient.getSecrets("");
+            this.keyVaultClient2.getSecrets("");
         });
     }
 
@@ -64,7 +64,7 @@ export class KeyVaultHelper2 {
         secretName = secretName.trim();
 
         return new Promise<void>((resolve, reject) => {
-            this.keyVaultClient.getSecretValue(secretName);
+            this.keyVaultClient2.getSecretValue(secretName);
         });
     }
 
@@ -76,19 +76,6 @@ export class KeyVaultHelper2 {
         core.setSecret(secretValue);
         core.exportVariable(secretName, secretValue);
         core.setOutput(secretName, secretValue);
-    }
-
-    private filterDisabledAndExpiredSecrets(listOfSecrets: AzureKeyVaultSecret2[]): AzureKeyVaultSecret2[] {
-        var result: AzureKeyVaultSecret2[] = [];
-        var now: Date = new Date();
-
-        listOfSecrets.forEach((value: AzureKeyVaultSecret2, index: number) => {
-            if (value.enabled && (!value.expires || value.expires > now)) {
-                result.push(value);
-            }
-        });
-        
-        return result;
     }
 
     private getError(error: any): any {
