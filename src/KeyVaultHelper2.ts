@@ -36,7 +36,7 @@ export class KeyVaultHelper2 {
 
     private downloadAllSecrets(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            this.keyVaultClient2.getSecrets("");
+            this.keyVaultClient2.getSecrets();
         });
     }
 
@@ -66,16 +66,6 @@ export class KeyVaultHelper2 {
         return new Promise<void>((resolve, reject) => {
             this.keyVaultClient2.getSecretValue(secretName);
         });
-    }
-
-    private setVaultVariable(secretName: string, secretValue: string): void {
-        if (!secretValue) {
-            return;
-        }
-
-        core.setSecret(secretValue);
-        core.exportVariable(secretName, secretValue);
-        core.setOutput(secretName, secretValue);
     }
 
     private getError(error: any): any {
