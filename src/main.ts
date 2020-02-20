@@ -4,6 +4,7 @@ import { getHandler } from 'azure-actions-webclient/lib/AuthorizationHandlerFact
 import { IAuthorizationHandler } from 'azure-actions-webclient/lib/AuthHandler/IAuthorizationHandler';
 import { KeyVaultActionParameters } from './KeyVaultActionParameters';
 import { KeyVaultHelper } from './KeyVaultHelper';
+import { KeyVaultHelper2 } from './KeyVaultHelper2';
 
 var prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USER_AGENT}` : "";
 async function run() {
