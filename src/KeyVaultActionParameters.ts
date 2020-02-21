@@ -47,7 +47,7 @@ export class KeyVaultActionParameters {
             this.authorityHost =  activeDirectoryEndpointUrl;
                 console.log(`resourceManagerEndpointUrl:{}`,resourceManagerEndpointUrl );
 
-            var re = /management/gi; 
+            var re = /https:\/\/management/gi; 
             var str = resourceManagerEndpointUrl;
             var newstr = str.replace(re, "vault"); 
 
