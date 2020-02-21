@@ -13,20 +13,13 @@ export class KeyVaultActionParameters {
     public creds: string;
 
     public getKeyVaultActionParameters() : KeyVaultActionParameters {
-        this.keyVaultName = core.getInput("keyvault");
         this.secretsFilter = core.getInput("secrets");
         this.apiVersion = core.getInput("apiversion");
-        
-
-        if (!this.keyVaultName) {
-            core.setFailed("Vault name not provided.");
-        }
-
+    
         if (!this.secretsFilter) {
             core.setFailed("Secret filter not provided.");
         }
 
-        var azureKeyVaultDnsSuffix = "vault.azure.net";
         if (this.apiVersion == "v2")
         {
             let creds = core.getInput('creds', { required: false });
@@ -71,6 +64,11 @@ export class KeyVaultActionParameters {
         } 
         else
         {
+            this.keyVaultName = core.getInput("keyvault");
+            if (!this.keyVaultName) {
+                core.setFailed("Vault name not provided.");
+            }
+            var azureKeyVaultDnsSuffix = "vault.azure.net";
             this.keyVaultUrl = util.format("https://%s.%s", this.keyVaultName, azureKeyVaultDnsSuffix);
             return this;
         }
