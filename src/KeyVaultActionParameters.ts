@@ -30,37 +30,47 @@ export class KeyVaultActionParameters {
         if (this.apiVersion == "v2")
         {
             let creds = core.getInput('creds', { required: false });
-            let secrets = new SecretParser(creds, FormatType.JSON);
-            let servicePrincipalId = secrets.getSecret("$.clientId", false);
-                console.log(`servicePrincipalId:{}`,servicePrincipalId );
-
-            let servicePrincipalKey = secrets.getSecret("$.clientSecret", true);
-            let tenantId = secrets.getSecret("$.tenantId", false);
-                console.log(`tenantId:{}`,tenantId );
-            let subscriptionId = secrets.getSecret("$.subscriptionId", false);
-                console.log(`subscriptionId:{}`,subscriptionId );
-            let activeDirectoryEndpointUrl = secrets.getSecret("$.activeDirectoryEndpointUrl", false);
-                console.log(`activeDirectoryEndpointUrl:{}`,activeDirectoryEndpointUrl );
-            let resourceManagerEndpointUrl =  secrets.getSecret("$.resourceManagerEndpointUrl", false);
-                console.log(`resourceManagerEndpointUrl:{}`,resourceManagerEndpointUrl );
-
-            this.authorityHost =  activeDirectoryEndpointUrl;
-                console.log(`resourceManagerEndpointUrl:{}`,resourceManagerEndpointUrl );
-
-            var re = /https:\/\/management/gi; 
-            var str = resourceManagerEndpointUrl;
-            var newstr = str.replace(re, "vault"); 
-
-            azureKeyVaultDnsSuffix = newstr;
-                console.log(`azureKeyVaultDnsSuffix:{}`,azureKeyVaultDnsSuffix );
-
-            if (!servicePrincipalId || !servicePrincipalKey || !tenantId || !subscriptionId) {
-                throw new Error("Not all values are present in the creds object. Ensure clientId, clientSecret, tenantId and subscriptionId are supplied.");
+            if (creds)
+            {
+                let secrets = new SecretParser(creds, FormatType.JSON);
+                let servicePrincipalId = secrets.getSecret("$.clientId", false);
+                    console.log(`servicePrincipalId:{}`,servicePrincipalId );
+                let servicePrincipalKey = secrets.getSecret("$.clientSecret", true);
+                let tenantId = secrets.getSecret("$.tenantId", false);
+                    console.log(`tenantId:{}`,tenantId );
+                let subscriptionId = secrets.getSecret("$.subscriptionId", false);
+                    console.log(`subscriptionId:{}`,subscriptionId );
+                let activeDirectoryEndpointUrl = secrets.getSecret("$.activeDirectoryEndpointUrl", false);
+                    console.log(`activeDirectoryEndpointUrl:{}`,activeDirectoryEndpointUrl );
+                let resourceManagerEndpointUrl =  secrets.getSecret("$.resourceManagerEndpointUrl", false);
+                    console.log(`resourceManagerEndpointUrl:{}`,resourceManagerEndpointUrl );
+    
+                this.authorityHost =  activeDirectoryEndpointUrl;
+                    console.log(`resourceManagerEndpointUrl:{}`,resourceManagerEndpointUrl );
+    
+                var re = /https:\/\/management/gi; 
+                var str = resourceManagerEndpointUrl;
+                var newstr = str.replace(re, "vault"); 
+    
+                azureKeyVaultDnsSuffix = newstr;
+                    console.log(`azureKeyVaultDnsSuffix:{}`,azureKeyVaultDnsSuffix );
+    
+                if (!servicePrincipalId || !servicePrincipalKey || !tenantId || !subscriptionId) {
+                    throw new Error("Not all values are present in the creds object. Ensure clientId, clientSecret, tenantId and subscriptionId are supplied.");
+                }
+    
+                process.env.AZURE_TENANT_ID = tenantId;
+                process.env.AZURE_CLIENT_ID = servicePrincipalId;
+                process.env.AZURE_CLIENT_SECRET = servicePrincipalKey;
             }
-
-            process.env.AZURE_TENANT_ID = tenantId;
-            process.env.AZURE_CLIENT_ID = servicePrincipalId;
-            process.env.AZURE_CLIENT_SECRET = servicePrincipalKey;
+            else{
+                // If no creds, try MSI
+                let inputAzureKeyVaultDnsSuffix = core.getInput('AZURE_KEYVAULT_DNS_SUFFIX', { required: false });
+                if (inputAzureKeyVaultDnsSuffix){
+                    azureKeyVaultDnsSuffix = inputAzureKeyVaultDnsSuffix;
+                }
+            }
+            
         } 
         else
         {
