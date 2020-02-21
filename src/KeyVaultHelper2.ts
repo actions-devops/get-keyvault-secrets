@@ -18,7 +18,7 @@ export class KeyVaultHelper2 {
 
     constructor(keyVaultActionParameters: KeyVaultActionParameters) {
         this.keyVaultActionParameters = keyVaultActionParameters;
-        this.keyVaultClient2 = new KeyVaultClient2( keyVaultActionParameters.keyVaultUrl);
+        this.keyVaultClient2 = new KeyVaultClient2( keyVaultActionParameters.keyVaultUrl, keyVaultActionParameters.authorityHost);
     }
 
     public downloadSecrets(): Promise<void> {

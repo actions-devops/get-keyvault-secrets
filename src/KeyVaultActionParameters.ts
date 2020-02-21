@@ -8,6 +8,7 @@ export class KeyVaultActionParameters {
     public keyVaultUrl: string;
     public apiVersion: string;
     public cloud: string;
+    public authorityHost: string;
 
     public getKeyVaultActionParameters() : KeyVaultActionParameters {
         this.keyVaultName = core.getInput("keyvault");
@@ -29,6 +30,7 @@ export class KeyVaultActionParameters {
             if (this.cloud == "AzureUSGovernment")
             {
                 azureKeyVaultDnsSuffix = "vault.usgovcloudapi.net";
+                this.authorityHost = "https://login.microsoftonline.us"
             }
         } 
         else

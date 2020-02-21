@@ -2,29 +2,39 @@
 // Licensed under the MIT license.
 
 import { SecretClient } from "@azure/keyvault-secrets";
-import { DefaultAzureCredential } from "@azure/identity";
+import { DefaultAzureCredential, TokenCredentialOptions } from "@azure/identity";
 import * as core from '@actions/core'
 import { resolve } from "dns";
 
 export class KeyVaultClient2 {    
        
-    private keyVaultUrl;
+    private keyVaultUrl:string;
+    private authorityHost:string;
     private secretClient: SecretClient;
+    private credential;
 
-    constructor(keyVaultUrl: string) {
+    constructor(keyVaultUrl: string, authorityHost: string) {
         this.keyVaultUrl = keyVaultUrl;
+        this.authorityHost = authorityHost;
+        this.credential = null;
 
         // DefaultAzureCredential expects the following three environment variables:
         // - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
         // - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
         // - AZURE_CLIENT_SECRET: The client secret for the registered application
-        const credential = new DefaultAzureCredential();
 
-        //const vaultName = process.env["KEYVAULT_NAME"] || "<keyvault-name>";
-        //const url = `https://${vaultName}.vault.azure.net`;
-        //var url = this.keyVaultUrl;
+        if (this.authorityHost)
+        {
+            var tokenOptions:TokenCredentialOptions = { 
+                authorityHost: this.authorityHost
+             }
+             this.credential = new DefaultAzureCredential(tokenOptions);
 
-        const client = new SecretClient(this.keyVaultUrl, credential);
+        }else{
+            this.credential = new DefaultAzureCredential();
+        }
+
+        const client = new SecretClient(this.keyVaultUrl, this.credential);
         this.secretClient = client;
 
     }
