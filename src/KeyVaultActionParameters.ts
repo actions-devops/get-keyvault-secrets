@@ -29,7 +29,7 @@ export class KeyVaultActionParameters {
         var azureKeyVaultDnsSuffix = "vault.azure.net";
         if (this.apiVersion == "v2")
         {
-            let creds = core.getInput('creds', { required: true });
+            let creds = core.getInput('creds', { required: false });
             let secrets = new SecretParser(creds, FormatType.JSON);
             let servicePrincipalId = secrets.getSecret("$.clientId", false);
                 console.log(`servicePrincipalId:{}`,servicePrincipalId );
