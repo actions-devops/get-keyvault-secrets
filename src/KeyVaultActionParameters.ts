@@ -58,9 +58,9 @@ export class KeyVaultActionParameters {
                 throw new Error("Not all values are present in the creds object. Ensure clientId, clientSecret, tenantId and subscriptionId are supplied.");
             }
 
-            core.exportVariable('AZURE_TENANT_ID', tenantId);
-            core.exportVariable('AZURE_CLIENT_ID', servicePrincipalId);
-            core.exportVariable('AZURE_CLIENT_SECRET',servicePrincipalKey );
+            process.env.AZURE_TENANT_ID = tenantId;
+            process.env.AZURE_CLIENT_ID = servicePrincipalId;
+            process.env.AZURE_CLIENT_SECRET = servicePrincipalKey;
         } 
         else
         {
