@@ -22,6 +22,7 @@ export class KeyVaultActionParameters {
 
         if (this.apiVersion == "v2")
         {
+            // v2
             let creds = core.getInput('creds', { required: false });
             if (creds)
             {
@@ -55,6 +56,7 @@ export class KeyVaultActionParameters {
                 process.env.AZURE_TENANT_ID = tenantId;
                 process.env.AZURE_CLIENT_ID = servicePrincipalId;
                 process.env.AZURE_CLIENT_SECRET = servicePrincipalKey;
+                this.keyVaultUrl = core.getInput('keyvaulturl', { required: true });
             }
             else{
                 // If no creds, try MSI
@@ -64,6 +66,7 @@ export class KeyVaultActionParameters {
         } 
         else
         {
+            //v1
             this.keyVaultName = core.getInput("keyvault");
             if (!this.keyVaultName) {
                 core.setFailed("Vault name not provided.");
