@@ -5,31 +5,32 @@ import { IAuthorizationHandler } from 'azure-actions-webclient/lib/AuthHandler/I
 import { KeyVaultActionParameters } from './KeyVaultActionParameters';
 import { KeyVaultHelper } from './KeyVaultHelper';
 
-var prefix = !!process.env.AZURE_HTTP_USER_AGENT ? `${process.env.AZURE_HTTP_USER_AGENT}` : "";
+
 async function run() {
+    const prefix = process.env.AZURE_HTTP_USER_AGENT ?? "";
     try {
-        let usrAgentRepo = crypto.createHash('sha256').update(`${process.env.GITHUB_REPOSITORY}`).digest('hex');
-        let actionName = 'GetKeyVaultSecrets';
-        let userAgentString = (!!prefix ? `${prefix}+` : '') + `GITHUBACTIONS_${actionName}_${usrAgentRepo}`;
+        const usrAgentRepo = crypto.createHash('sha256').update(process.env.GITHUB_REPOSITORY).digest('hex');
+        const actionName = 'GetKeyVaultSecrets';
+        const userAgentString = `${prefix ? `${prefix}+` : ''}GITHUBACTIONS_${actionName}_${usrAgentRepo}`;
+        const actionParameters = new KeyVaultActionParameters().getKeyVaultActionParameters();
+        const handler: IAuthorizationHandler = await getHandler();
+        const keyVaultHelper = new KeyVaultHelper(handler, 100, actionParameters);  
+        
         core.exportVariable('AZURE_HTTP_USER_AGENT', userAgentString);
+        
+        if (!handler) {
+            throw('Could not login to Azure');
+        }       
+                 
+        keyVaultHelper.downloadSecrets();
 
-        var actionParameters = new KeyVaultActionParameters().getKeyVaultActionParameters();
-        let handler: IAuthorizationHandler = null;
-
-        try {
-            handler = await getHandler();
-        }
-        catch (error) {
-            core.setFailed("Could not login to Azure.")
-        }
-
-        if (handler != null) {
-            var keyVaultHelper = new KeyVaultHelper(handler, 100, actionParameters);            
-            keyVaultHelper.downloadSecrets();
-        }        
     } catch (error) {
-        core.debug("Get secret failed with error: " + error);
-        core.setFailed(!!error.message ? error.message : "Error occurred in fetching the secrets.");
+        if ((error.indexOf('401') > 0) || (error.indexOf('login') > 0)) {
+            core.setFailed("Could not login to Azure.");
+        } else {       
+            core.debug(`Get secret failed with error:  ${error}`);
+            core.setFailed(error ?? "Error occurred in fetching the secrets.");
+        }
     }
     finally {
         core.exportVariable('AZURE_HTTP_USER_AGENT', prefix);
